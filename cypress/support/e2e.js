@@ -24,5 +24,6 @@ import './recentactivities'
 import './Interaction'
 import './login2'
 import './interaction2'
+import './monitoring'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
