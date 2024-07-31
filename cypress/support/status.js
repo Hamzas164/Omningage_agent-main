@@ -32,6 +32,7 @@ Cypress.Commands.add("Status", () => {
         } else {
             // Unexpected status
             cy.log('Unexpected status:', statusText);
+            console.log("Get Input here")
         }
     });
 });
