@@ -1,92 +1,101 @@
+// cypress/support/commands.js
+
+// Extracted selectors for easier management
+const locators = {
+  recentActivities: "Recent Activities",
+  editNoteButton: "#omni_edit_note_buttons_1",
+  noteTextarea: "textarea[type='text']",
+  dropdownButton: "#omni_drop_down_buttons_1",
+  searchTextButtons: "#omni_search_text_buttons_1",
+  searchCheckbox: '#omni_checkbox_1 > .mat-checkbox-layout > .mat-checkbox-inner-container',
+  searchInputField: "#omni_search_text_inputfield_1",
+  wrapupCheckbox: "#omni_checkbox_0-input",
+  saveButton: "#omni_save_button_1",
+  addTagButton: "#omni_add_tag_button_1",
+  updateTagInput: "#omni_update_tag_1-input",
+  searchTextTag: "#omni_search_text_tag_1",
+  firstTagCheckbox: "#omni_update_tag_0-input",
+  removeWrapupTagsButton: '#omni_remove_wraupup_tags_buttons_1',
+  removeTagButton: '#omni_on_remove_tag_1',
+  chatHistoryClearButton: "#omni_chat_history_clear_btn",
+  dropdownButtonPrefix: "#omni_drop_down_buttons",
+  chatTransferButtonPrefix: "#omni_chat_transfer_buttons",
+};
+
+// Custom command for recent activities
 Cypress.Commands.add("recent", () => {
-  // Click on "Recent Activities"
-  cy.contains("Recent Activities").click({ force: true }).then(() => {
-    // Wait for the recent activities section to load
+  cy.contains(locators.recentActivities).click({ force: true }).then(() => {
     cy.wait(5000);
 
-    // Click on the "Edit Note" button
-    cy.get("#omni_edit_note_buttons_3").click({ force: true });
+    cy.get(locators.editNoteButton).click({ force: true });
     cy.wait(5000);
 
-    // Clear and update the notes
-    cy.get("textarea[type='text']").clear().type("Notes get updated");
+    cy.get(locators.noteTextarea).clear().type("Notes get updated");
     cy.contains("Update").click();
     cy.wait(4000);
 
-    // Click on the CRM button in recent activities
-    cy.get("#omni_widgets_recentActiv_crm_buttons_3").click({ force: true });
-    cy.wait(6000);
+    handleDropdownActions();
+    addTag("testing");
+    removeTags();
 
-    // Click on "Cancel" in CRM view
-    cy.get('#omni_crm_dialog_cancel_btn').click();
-    cy.wait(2000);
-
-    // Click on the dropdown button
-    cy.get("#omni_drop_down_buttons_22").click({ force: true }).wait(2000);
-
-    // Click on the search button
-    cy.get("#omni_search_text_buttons_22").click();
-    cy.wait(2000);
-
-    // Search for "Inbound" and select checkbox
-    cy.get("#omni_search_text_inputfield_22").type("Inbound");
-    cy.wait(2000);
-    cy.get("#omni_checkbox_22").click();
-    cy.wait(2000);
-
-    // Save the search filter
-    cy.get("#omni_save_button_22").click({ force: true });
-    cy.wait(3000);
-
-    // Add a tag
-    cy.get("#omni_add_tag_button_22").click({ force: true }).wait(1000);
-    cy.get("#omni_search_text_tag_22").type("demo");
-    cy.wait(1500);
-    cy.get("#omni_update_tag_22").click();
-    cy.wait(1000);
-    cy.get("#omni_save_button_22").click({ force: true });
-    cy.wait(2000);
-
-    // Click on the dropdown button again
-    cy.get("#omni_drop_down_buttons_1").click({ force: true }).wait(2000);
-
-    // Call the function to click the chat transfer button and download transcript
     clickChatTransferButton(0);
   });
 });
 
-// Function to recursively click the chat transfer button
-function clickChatTransferButton(interactionIndex) {
-  if (interactionIndex <= 26) {
-    // Construct the locator for each interaction
-    const interactionLocator = `#omni_drop_down_buttons_${interactionIndex}`;
+// Handle dropdown actions
+function handleDropdownActions() {
+  cy.get(locators.dropdownButton).click({ force: true }).wait(2000);
+  cy.get(locators.searchTextButtons).click().wait(2000);
+  cy.get(locators.searchCheckbox).click().wait(2000);
+  cy.get(locators.searchInputField).type("Wrapups");
+  cy.wait(2000);
+  cy.get(locators.wrapupCheckbox).click({ force: true });
+  cy.wait(2000);
+  cy.get(locators.saveButton).click({ force: true });
+  cy.wait(3000);
+}
 
-    // Click on the dropdown button for this interaction
+// Add a tag to an interaction
+function addTag(tagName) {
+  cy.get(locators.addTagButton).click({ force: true }).wait(1000);
+  cy.get(locators.updateTagInput).click({ force: true });
+  cy.wait(1500);
+  cy.get(locators.searchTextTag).type(tagName);
+  cy.wait(1500);
+  cy.get(locators.firstTagCheckbox).click({ force: true });
+  cy.get(locators.saveButton).click({ force: true });
+  cy.wait(2000);
+}
+
+// Remove all tags from the first interaction
+function removeTags() {
+  cy.get(locators.dropdownButton).click({ force: true }).wait(5000);
+  cy.get(locators.dropdownButton).click({ force: true }).wait(2000);
+  cy.get(locators.removeWrapupTagsButton).click().wait(2000);
+  cy.get(locators.removeWrapupTagsButton).click().wait(2000);
+  cy.get(locators.removeTagButton).click().wait(2000);
+  cy.get(locators.removeTagButton).click().wait(2000);
+  cy.get(locators.saveButton).click({ force: true });
+}
+
+// Recursively click chat transfer buttons
+function clickChatTransferButton(interactionIndex) {
+    if (interactionIndex > 40) return;
+
+    const interactionLocator = `${locators.dropdownButtonPrefix}_${interactionIndex}`;
     cy.get(interactionLocator).click({ force: true }).then(() => {
-      // Construct the locator for the chat transfer button for this interaction
-      const chatTransferLocator = `#omni_chat_transfer_buttons_${interactionIndex}`;
-      
-      // Check if chat transfer button exists for this interaction
-      cy.get(chatTransferLocator).then($element => {
-        if ($element.length > 0) {
-          // If chat transfer button is found, click it and execute subsequent code
-          cy.get(chatTransferLocator).click({ force: true }).wait(4000);
-          cy.wait(2000); // Apply wait as needed
-          cy.get("#omni_chat_history_download_btn").click({ force: true }).wait(4000); // Forcefully click the download button
-          cy.get("#omni_chat_history_convert_pdf").click();
-          
-          // Terminate the loop after downloading the chat transcript
-          return;
-        }
-      }).then(() => {
-        // Move to the next interaction
-        if (interactionIndex === 0) {
-          // Stop the loop after the first download
-          return;
-        } else {
-          clickChatTransferButton(interactionIndex + 1);
-        }
-      });
+        const chatTransferLocator = `${locators.chatTransferButtonPrefix}_${interactionIndex}`;
+        cy.get('body').then($body => {
+            if ($body.find(chatTransferLocator).length > 0) {
+                cy.get(chatTransferLocator).click({ force: true }).wait(4000);
+                cy.wait(3000); // Apply wait as needed
+                cy.get(locators.chatHistoryClearButton).click().wait(4000);
+            }
+        }).then(() => {
+            // Continue to the next interaction if more than one needs processing
+            if (interactionIndex < 40) {
+                clickChatTransferButton(interactionIndex + 1);
+            }
+        });
     });
-  }
 }

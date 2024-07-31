@@ -25,5 +25,21 @@ import './Interaction'
 import './login2'
 import './interaction2'
 import './monitoring'
+import './inboundcall'
+import './locators'
+beforeEach(() => {
+    // Clear cookies
+    cy.clearCookies()
+  
+    // Clear local storage
+    cy.window().then((win) => {
+      win.localStorage.clear()
+    })
+  
+    // Clear session storage
+    cy.window().then((win) => {
+      win.sessionStorage.clear()
+    })
+  })
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

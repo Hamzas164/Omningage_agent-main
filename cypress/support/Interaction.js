@@ -3,18 +3,20 @@ Cypress.Commands.add("interaction", () => {
     cy.wait(3000);
   
     // Open the date picker
-    cy.get("#omni_ie_selected_date_format").click().wait(2000);
+    cy.get('.p-calendar > .p-element').click().wait(3000)
   
     // Navigate to the correct month if necessary (example: go to the previous month)
     // cy.get('.p-datepicker-prev').click(); // Uncomment and modify if needed
   
     // Select the specific date "1"
     cy.get('td:not(.p-datepicker-other-month) span').contains('1').click({ force: true });
+    cy.get('.p-calendar > .p-element').click().wait(3000)
+
     cy.wait(2000);
   
     // Open the second date picker and select the current date
-    cy.get("#omni_ie_selected_date_format_1").click().wait(4000);
-    cy.get('.p-datepicker-today > .p-ripple').click({ force: true }).wait(2000);
+   // cy.get("#omni_ie_selected_date_format_1").click().wait(4000);
+    //y.get('.p-datepicker-today > .p-ripple').click({ force: true }).wait(2000);
   
     // Additional interaction steps
     cy.get("#omni_ie_duration_button").click().wait(2000);

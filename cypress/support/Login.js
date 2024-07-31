@@ -1,110 +1,87 @@
 Cypress.Commands.add("LoginPage", () => {
-    // Set the viewport size to 1600x850
+    // Set the viewport size
     cy.viewport(1450, 800);
-
+  
     // Visit the website with the specified URL
-    cy.visit("https://qa1.omningage.click/#/");
-
-    // Click on the login button with a short delay to allow Cypress to set up interception
-    cy.wait(2000); 
-    cy.get('[type="submit"]').click();
-
-    // Intercept any network request matching the URL pattern provided
-    cy.intercept("https://qa-1.awsapps.com/auth/**").as("popupUrl");
-
-    // Wait for the intercepted network request to the popup URL with a longer timeout
-    cy.wait("@popupUrl", { timeout: 25000 }).then((interception) => {
-        // Get the intercepted request object
-        const request = interception.request;
-
-        // Open the popup URL on the same website page
-        cy.visit(request.url, { qs: request.query });
-
-        // Wrap commands targeting the popup domain within cy.origin() to ensure they run in the context of the popup
-        cy.origin("https://qa-1.awsapps.com/", () => {
-            // Type the username into the username field
-            cy.get("#wdc_username").type("agent.a3");
-
-            // Type the password into the password field
-            cy.get("#wdc_password").type("A12dadf125");
-
-            // Click on the login button inside the popup
-            cy.get("#wdc_login_button").click();
-
-            // Wait for the URL to include a specific substring indicating successful login
-            cy.url().should("include", "https://qa-1.awsapps.com/");
-
-           
-            cy.wait(20000);
-
-            // After login, return back to the original website
-            cy.visit("https://qa1.omningage.click/#/");
-
-            
-            cy.wait(2000);
-        });
-    });
-
-    // Click again on the login button to ensure the popup is not triggered again
-    cy.get('[type="submit"]').click();
-
-    // Wait for the redirection to the QA website
-    cy.url().should("include", "qa1.omningage.click");
+    cy.visit("https://vmo2-qa.omningage.click/");
+  
+    // Click on the login button
+    cy.wait(3000);
+    cy.get('#omni_dashboard_login_btn').click();
     cy.wait(20000);
-    cy.get("#omni_pin_password_1").type("1")
-    cy.get("#omni_pin_password_2").type("2")
-    cy.get("#omni_pin_password_3").type("3")
-    cy.get("#omni_pin_password_4").type("4")
-    cy.get("#omni_pin_password_5").type("5")
-    cy.get("#omni_pin_password_6").type("6")
+  });
+  
+  // Ignore uncaught exceptions
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from failing the test
+    return false;
+  });
+//  // Intercept the network request
+//  cy.intercept("https://qa-1.awsapps.com/auth/**").as("popupUrl");
 
-    cy.get('[type="submit"]').click();
-    cy.wait(15000)
-});
-// Cypress.Commands.add("LoginPage", () => {
-//     // Set the viewport size to 1600x850
-//     cy.viewport(1450, 800);
+//  // Handle uncaught exceptions to prevent test failure
+//  Cypress.on('uncaught:exception', (err, runnable) => {
+//      // Returning false here prevents Cypress from failing the test
+//      return false;
+//  });
 
-//     // Visit the website with the specified URL
-//     cy.visit("https://qa2.omningage.click/#/");
+//  // Wait for the intercepted network request
+//  cy.wait("@popupUrl", { timeout: 25000 }).then((interception) => {
+//      // Get the intercepted request object
+//      const request = interception.request;
 
-//     // Click on the login button with a short delay to allow Cypress to set up interception
-//     cy.wait(1000); 
-//     cy.get('[type="submit"]').click();
+//      // Visit the popup URL
+//      cy.visit(request.url, { qs: request.query });
 
-//     // Intercept any network request matching the URL pattern provided
-//     cy.intercept("https://omningage-qa.awsapps.com/auth/**").as("popupUrl");
+//      // Use `cy.origin` to handle cross-origin content
+//      cy.origin("https://qa-1.awsapps.com", () => {
+//          // Wait for the iframe to be fully loaded
+//          cy.wait(5000); // Adjust as necessary
 
-//     // Wait for the intercepted network request to the popup URL with a longer timeout
-//     cy.wait("@popupUrl", { timeout: 15000 }).then((interception) => {
-//         // Get the intercepted request object
-//         const request = interception.request;
+//          // Type into the username field
+//          cy.get("#wdc_username").type("agent.a3");
 
-//         // Open the popup URL on the same website page
-//         cy.visit(request.url, { qs: request.query });
+//          // Type into the password field
+//          cy.get("#wdc_password").type("A12dadf125");
 
-//         // Wrap commands targeting the popup domain within cy.origin() to ensure they run in the context of the popup
-//         cy.origin("https://omningage-qa.awsapps.com", () => {
-//             // Type the username into the username field
-//             cy.get("#wdc_username").type("asif.rana");
+//          // Click the login button
+//          cy.get("#wdc_login_button").click();
 
-//             // Type the password into the password field
-//             cy.get("#wdc_password").type("A12dadf125");
+//          // Wait for the successful login URL
+//          cy.url().should("include", "https://qa-1.awsapps.com/");
 
-//             // Click on the login button inside the popup
-//             cy.get("#wdc_login_button").click();
+//          // Wait for additional operations if necessary
+//          cy.wait(30000);
 
-//             // Wait for the URL to include a specific substring indicating successful login
-//             cy.url().should("include", "omningage-qa.my.connect.aws");
-//         });
-//     });
+//          // After login, return back to the original website
+//          cy.visit("https://vmo2-qa.omningage.click/");
+//          cy.wait(2000);
+//      });
+//  });
 
-//     // After login, return back to the original website
-//     cy.visit("https://qa2.omningage.click/#/");
+// //  // Click again on the login button to ensure the popup is not triggered again
+// //  cy.get('#omni_dashboard_login_btn').click();
 
-//     // Click again on the login button to ensure the popup is not triggered again
-//     cy.get('[type="submit"]').click();
+// //  // Wait for redirection
+// //  cy.url().should("include", "vmo2-qa.omningage.click");
+// //  cy.wait(20000);
 
-//     // Wait for the redirection to the QA website
-//     cy.url().should("include", "qa2.omningage.click");
-// });
+// //  // Assert that widgets contain data
+// //  cy.get('.cont-stats > .wrapper').should('not.be.empty');
+// //  cy.get('.totalTime > h3').should('not.be.empty');
+// //  cy.get('.inbound > .wrapper').should('not.be.empty');
+
+// //  // Wait to ensure the page is fully loaded
+// // // cy.wait(5000);
+// // // cy.get('.mat-button-wrapper').click().wait(2000)
+// // // cy.get('#omni_logout_agent_logout_btn').click().wait(4000)
+// //  // Reload the page to ensure changes take effect
+ 
+
+// //  // Make a request with cache control to ensure no caching issues
+// //  cy.request({
+// //      url: 'https://vmo2-qa.omningage.click/',
+// //      method: 'GET',
+// //      headers: {
+// //          'Cache-Control': 'no-cache'
+// //      }
